@@ -60,11 +60,12 @@ void loop() {
     double ph = ph_calc(), turb = turbidity_calc();
 
     if((turb > 5 || (ph < 7 || ph > 8)) && (stopTime-start > 5000 || stopTime-start == 0)){
-      sendMessage();
+      //sendMessage();
       start = millis();
     }
     String data = String(ph);
-    Serial.println(data);
+    Serial.print(data);
+    Serial.println(turb);
     delay(500);
     stopTime = millis();
 }
@@ -80,7 +81,7 @@ double ph_calc(){
       pHValue = 3.5*voltage+Offset;
       samplingTime=millis();
   }
-  if(millis() - printTime > printInterval)   //Every 800 milliseconds, print a numerical, convert the state of the LED indicator
+  if(millis() - printTime > printInterval) {  //Every 800 milliseconds, print a numerical, convert the state of the LED indicator
     return pHValue;
     
   }
