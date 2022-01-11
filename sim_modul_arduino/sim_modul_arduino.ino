@@ -59,7 +59,7 @@ void sendMessage(){
 void loop() {
     double ph = ph_calc(), turb = turbidity_calc();
 
-    if((turb > 5 || (ph < 7 || ph > 8)) && (stopTime-start > 5000 || stopTime-start == 0)){
+    if((turb > 5 || (ph < 7 || ph > 8)) && (stopTime-start > 300000 || stopTime-start == 0)){ // 5 minutes interval
       //sendMessage();
       start = millis();
     }
