@@ -8,6 +8,10 @@ int pHArray[ArrayLenth];   //Store the average value of the sensor feedback
 int pHArrayIndex=0, start=0, stopTime=0;
 static double pHValue,voltage;
 
+// Editable
+int minutes = 300000; // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
+float maxValueOfTurbidity = 4.21; // Nilai Maksimum pada turbidity ketika dimasukkan ke dalam air bersih
+
 // Turbidity Stuffs
 static double kekeruhan, volta;
 
@@ -15,7 +19,7 @@ static double kekeruhan, volta;
 
 //Create software serial object to communicate with SIM800L
 SoftwareSerial simSerial(3, 2); //SIM800L Tx & Rx is connected to Arduino #3 & #2
-SoftwareSerial espSerial(1,0);
+SoftwareSerial espSerial(1,0); // Serial Port to esp
 
 void setup()
 {
@@ -61,7 +65,7 @@ void sendMessage(){
 void loop() {
     double ph = ph_calc(), turb = turbidity_calc();
 
-    if((turb > 5 || (ph < 7 || ph > 8)) && (abs(stopTime-start) > 300000 || stopTime-start == 0)){ // 5 minutes interval
+    if((turb > 5 || (ph < 7 || ph > 8)) && (abs(stopTime-start) > minutes || stopTime-start == 0)){ // 5-minute interval
       sendMessage();
       start = millis();
     }
@@ -136,7 +140,7 @@ double turbidity_calc(){
   volta=vr();
   //Serial.print("Nilai tegangan = ");
   //Serial.print(volta);
-  kekeruhan = 100.00-(volta/4.21)*100.00;
+  kekeruhan = 100.00-(volta/maxValueOfTurbidity)*100.00;
 //  Serial.print(" ");
 //  Serial.print("Nilai kekeruhan = ");
   //Serial.print(kekeruhan);
