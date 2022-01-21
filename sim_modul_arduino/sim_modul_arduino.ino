@@ -1,12 +1,13 @@
  // PH stuffs
-#define TdsSensorPin A0
-#define VREF 5.0      // analog reference voltage(Volt) of the ADC
-#define SCOUNT  30           // sum of sample point
-int analogBuffer[SCOUNT];    // store the analog value in the array, read from ADC
-int analogBufferTemp[SCOUNT];
-int analogBufferIndex = 0,copyIndex = 0;
-float averageVoltage = 0,tdsValue = 0,temperature = 25;
-int start=0, stopTime=0;
+ #define SensorPin A0            //pH meter Analog output to Arduino Analog Input 0
+#define Offset 0.18            //deviation compensate
+#define samplingInterval 20
+#define printInterval 800
+#define ArrayLenth  40    //times of collection
+int pHArray[ArrayLenth];   //Store the average value of the sensor feedback
+int pHArrayIndex=0, start=0, stopTime=0;
+static double pHValue,voltage;
+
 
 // Editable
 int minutes = 300000; // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
@@ -14,7 +15,13 @@ String telpNumber = "\"+6282118988435\""; // No Telp yang ingin dikirimkan notif
 //float maxValueOfTurbidity = 4.21; // Nilai Maksimum pada turbidity ketika dimasukkan ke dalam air bersih
 
 // Turbidity Stuffs
-static double kekeruhan, volta;
+#define TdsSensorPin A1
+#define VREF 5.0      // analog reference voltage(Volt) of the ADC
+#define SCOUNT  30           // sum of sample point
+int analogBuffer[SCOUNT];    // store the analog value in the array, read from ADC
+int analogBufferTemp[SCOUNT];
+int analogBufferIndex = 0,copyIndex = 0;
+float averageVoltage = 0,tdsValue = 0,temperature = 25;
 
 #include <SoftwareSerial.h>
 
@@ -168,18 +175,18 @@ double tds_calc(){
    }
 }
 
-float vr() {
-  float cnt = 0;
-  float tot=0;
-  float tr=0;
-  float val = analogRead(A1);
-  float teg= val * (5.0/1024);
-  for (cnt=0;cnt<20;cnt++){
-    tot=tot+teg;
-  }
-  tr=tot/20;
-  return tr;
-}
+//float vr() {
+//  float cnt = 0;
+//  float tot=0;
+//  float tr=0;
+//  float val = analogRead(A1);
+//  float teg= val * (5.0/1024);
+//  for (cnt=0;cnt<20;cnt++){
+//    tot=tot+teg;
+//  }
+//  tr=tot/20;
+//  return tr;
+//}
 
 int getMedianNum(int bArray[], int iFilterLen) 
 {
