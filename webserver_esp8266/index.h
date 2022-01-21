@@ -30,7 +30,7 @@ const char webpage[] PROGMEM = R"=====(
 </div>
 <div id="tds">
   <h2>
-    TDS: <span id="bor"><span id="tds-val">0</span></span> ppm/l
+    TDS: <span id="bor"><span id="tds-val">0</span></span> ppm
   </h2>
 </div>
 <script>

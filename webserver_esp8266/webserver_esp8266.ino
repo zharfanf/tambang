@@ -77,7 +77,7 @@ void setup(void)
  
   server.on("/", handleRoot);
   server.on("/phread", sensor_ph);
-  server.on("/tdsread", sensor_turbidity);
+  server.on("/tdsread", sensor_tds);
   server.begin();
 }
 

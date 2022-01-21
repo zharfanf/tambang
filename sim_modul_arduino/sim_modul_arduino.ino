@@ -79,7 +79,8 @@ void loop() {
 //      Serial.print("keruh");
       start = millis();
     }
-    String data = String("|") + String(ph) + String("|") + String(turb) + String("|");
+    String data = String("|") + String(ph) + String("|") + String(tds) + String("|");
+    Serial.println(tds);
     Serial.println(data);
     espSerial.println(data); // Sending data to esp via serial communication (rx tx pin)
     delay(500);
@@ -175,18 +176,6 @@ double tds_calc(){
    }
 }
 
-//float vr() {
-//  float cnt = 0;
-//  float tot=0;
-//  float tr=0;
-//  float val = analogRead(A1);
-//  float teg= val * (5.0/1024);
-//  for (cnt=0;cnt<20;cnt++){
-//    tot=tot+teg;
-//  }
-//  tr=tot/20;
-//  return tr;
-//}
 
 int getMedianNum(int bArray[], int iFilterLen) 
 {
