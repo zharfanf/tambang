@@ -1,16 +1,17 @@
  // PH stuffs
-#define SensorPin A0            //pH meter Analog output to Arduino Analog Input 0
-#define Offset 0.18            //deviation compensate
-#define samplingInterval 20
-#define printInterval 800
-#define ArrayLenth  40    //times of collection
-int pHArray[ArrayLenth];   //Store the average value of the sensor feedback
-int pHArrayIndex=0, start=0, stopTime=0;
-static double pHValue,voltage;
+#define TdsSensorPin A0
+#define VREF 5.0      // analog reference voltage(Volt) of the ADC
+#define SCOUNT  30           // sum of sample point
+int analogBuffer[SCOUNT];    // store the analog value in the array, read from ADC
+int analogBufferTemp[SCOUNT];
+int analogBufferIndex = 0,copyIndex = 0;
+float averageVoltage = 0,tdsValue = 0,temperature = 25;
+int start=0, stopTime=0;
 
 // Editable
 int minutes = 300000; // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
-float maxValueOfTurbidity = 4.21; // Nilai Maksimum pada turbidity ketika dimasukkan ke dalam air bersih
+String telpNumber = "\"+6282118988435\""; // No Telp yang ingin dikirimkan notifikasi
+//float maxValueOfTurbidity = 4.21; // Nilai Maksimum pada turbidity ketika dimasukkan ke dalam air bersih
 
 // Turbidity Stuffs
 static double kekeruhan, volta;
@@ -19,12 +20,13 @@ static double kekeruhan, volta;
 
 //Create software serial object to communicate with SIM800L
 SoftwareSerial simSerial(3, 2); //SIM800L Tx & Rx is connected to Arduino #3 & #2
-SoftwareSerial espSerial(1,0); // Serial Port to esp
+SoftwareSerial espSerial(1, 0); // Serial Port to esp
 
 void setup()
 {
   //Begin serial communication with Arduino and Arduino IDE (Serial Monitor)
   Serial.begin(115200);
+  pinMode(TdsSensorPin,INPUT);
   
   //Begin serial communication with Arduino and SIM800L
   simSerial.begin(115200);
@@ -53,7 +55,8 @@ void sendMessage(){
 
   simSerial.println("AT+CMGF=1"); // Configuring TEXT mode
   updateSerial();
-  simSerial.println("AT+CMGS=\"+6282118988435\"");//change ZZ with country code and xxxxxxxxxxx with phone number to sms
+  String data = String("AT+CMGS=") + telpNumber;
+  simSerial.println(data);//change ZZ with country code and xxxxxxxxxxx with phone number to sms
   updateSerial();
   simSerial.print("Tangki sudah keruh, silahkan dibersihkan"); //text content
   updateSerial();
@@ -63,15 +66,10 @@ void sendMessage(){
 
 
 void loop() {
-    double ph = ph_calc(), turb = turbidity_calc();
-
-<<<<<<< HEAD
-    if((turb > 5 || (ph < 7 || ph > 8)) && (abs(stopTime-start) > 30000 || stopTime-start == 0)){ // 5 minutes interval
-=======
-    if((turb > 5 || (ph < 7 || ph > 8)) && (abs(stopTime-start) > minutes || stopTime-start == 0)){ // 5-minute interval
->>>>>>> 7d446dd19c71078c403de064831638e215884dca
+    double ph = ph_calc(), tds = tds_calc();
+    if((tds > 1000 || (ph < 6 || ph > 9)) && (abs(stopTime-start) > minutes || stopTime-start == 0)){ // 5-minute interval
       sendMessage();
-      Serial.print("keruh");
+//      Serial.print("keruh");
       start = millis();
     }
     String data = String("|") + String(ph) + String("|") + String(turb) + String("|");
@@ -140,16 +138,34 @@ double avergearray(int* arr, int number){
 }
 
 
-double turbidity_calc(){
-  volta=vr();
-  //Serial.print("Nilai tegangan = ");
-  //Serial.print(volta);
-  kekeruhan = 100.00-(volta/maxValueOfTurbidity)*100.00;
-//  Serial.print(" ");
-//  Serial.print("Nilai kekeruhan = ");
-  //Serial.print(kekeruhan);
-//  Serial.println(" NTU"); 
-  return kekeruhan<=0?0:kekeruhan; 
+double tds_calc(){
+  static unsigned long analogSampleTimepoint = millis();
+   if(millis()-analogSampleTimepoint > 40U)     //every 40 milliseconds,read the analog value from the ADC
+   {
+     analogSampleTimepoint = millis();
+     analogBuffer[analogBufferIndex] = analogRead(TdsSensorPin);    //read the analog value and store into the buffer
+     analogBufferIndex++;
+     if(analogBufferIndex == SCOUNT) 
+         analogBufferIndex = 0;
+   }   
+   static unsigned long printTimepoint = millis();
+   if(millis()-printTimepoint > 800U)
+   {
+      printTimepoint = millis();
+      for(copyIndex=0;copyIndex<SCOUNT;copyIndex++)
+        analogBufferTemp[copyIndex]= analogBuffer[copyIndex];
+      averageVoltage = getMedianNum(analogBufferTemp,SCOUNT) * (float)VREF / 1024.0; // read the analog value more stable by the median filtering algorithm, and convert to voltage value
+      float compensationCoefficient=1.0+0.02*(temperature-25.0);    //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
+      float compensationVolatge=averageVoltage/compensationCoefficient;  //temperature compensation
+      tdsValue=(133.42*compensationVolatge*compensationVolatge*compensationVolatge - 255.86*compensationVolatge*compensationVolatge + 857.39*compensationVolatge)*0.5; //convert voltage value to tds value
+      //Serial.print("voltage:");
+      //Serial.print(averageVoltage,2);
+      //Serial.print("V   ");
+//      Serial.print("TDS Value:");
+//      Serial.print(tdsValue,0);
+//      Serial.println("ppm ");
+      return tdsValue;
+   }
 }
 
 float vr() {
@@ -163,4 +179,29 @@ float vr() {
   }
   tr=tot/20;
   return tr;
+}
+
+int getMedianNum(int bArray[], int iFilterLen) 
+{
+      int bTab[iFilterLen];
+      for (byte i = 0; i<iFilterLen; i++)
+      bTab[i] = bArray[i];
+      int i, j, bTemp;
+      for (j = 0; j < iFilterLen - 1; j++) 
+      {
+      for (i = 0; i < iFilterLen - j - 1; i++) 
+          {
+        if (bTab[i] > bTab[i + 1]) 
+            {
+        bTemp = bTab[i];
+            bTab[i] = bTab[i + 1];
+        bTab[i + 1] = bTemp;
+         }
+      }
+      }
+      if ((iFilterLen & 1) > 0)
+    bTemp = bTab[(iFilterLen - 1) / 2];
+      else
+    bTemp = (bTab[iFilterLen / 2] + bTab[iFilterLen / 2 - 1]) / 2;
+      return bTemp;
 }
