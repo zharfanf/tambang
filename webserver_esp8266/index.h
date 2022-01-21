@@ -19,7 +19,7 @@ const char webpage[] PROGMEM = R"=====(
 <body style="background-color: #ccd5ae ">
 <center>
 <div>
-<h1>PH & TURBIDITY LEVEL WEBSERVER</h1>
+<h1>PH & TDS LEVEL WEBSERVER</h1>
   <!-- <button class="button" onclick="send(1)">LED ON</button>
   <button class="button" onclick="send(0)">LED OFF</button><BR> -->
 </div id="ph">
@@ -28,9 +28,9 @@ const char webpage[] PROGMEM = R"=====(
   PH: <span id="bor"><span id="ph-val">0</span></span>
 </h2>
 </div>
-<div id="turbidity">
+<div id="tds">
   <h2>
-    TURBIDITY: <span id="bor"><span id="turb-val">0</span></span> NTU
+    TDS: <span id="bor"><span id="tds-val">0</span></span> ppm/l
   </h2>
 </div>
 <script>
@@ -70,11 +70,11 @@ function getData_turb() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("turb-val").innerHTML =
+      document.getElementById("tds-val").innerHTML =
       this.responseText;
     }
   };
-  xhttp.open("GET", "turbread", true);
+  xhttp.open("GET", "tdsread", true);
   xhttp.send();
 }
 </script>

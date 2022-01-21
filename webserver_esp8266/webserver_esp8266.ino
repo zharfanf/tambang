@@ -4,7 +4,7 @@ www.circuitdigest.com
 */
 
 // Parsing Stuffs
-String Buffer, PH, Turbidity;
+String Buffer, PH, TDS;
 char c;
 int Index1, Index2, Index3;
 
@@ -34,8 +34,8 @@ void sensor_ph()
   
 }
 
-void sensor_turbidity(){
-  String data = Turbidity;
+void sensor_tds(){
+  String data = TDS;
   server.send(200, "text/plane", data);
   }
 
@@ -77,7 +77,7 @@ void setup(void)
  
   server.on("/", handleRoot);
   server.on("/phread", sensor_ph);
-  server.on("/turbread", sensor_turbidity);
+  server.on("/tdsread", sensor_turbidity);
   server.begin();
 }
 
@@ -99,7 +99,7 @@ void parsing_data(){
       Index2 = Buffer.indexOf('|', Index1+1);
       Index3 = Buffer.indexOf('|', Index2+1);
       PH = Buffer.substring(Index1+1, Index2);
-      Turbidity = Buffer.substring(Index2+1, Index3);
+      TDS = Buffer.substring(Index2+1, Index3);
       Buffer = "";
     }
   }
