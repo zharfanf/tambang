@@ -1,4 +1,4 @@
-19224301827915785
+19224301824108219
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -83052,7 +83052,7 @@ LM2596S
 
 
 0
-4
+12
 4
 tes_pers
 SIM800L
@@ -83066,12 +83066,12 @@ dfrobot_ph
 
 
 0
-7
+10
 7
 tes_pers
 dfrobot_turbidity
 
 
 0
-7
+10
 7

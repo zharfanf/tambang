@@ -1,4 +1,4 @@
-// PH stuffs
+ // PH stuffs
 #define SensorPin A0            //pH meter Analog output to Arduino Analog Input 0
 #define Offset 0.18            //deviation compensate
 #define samplingInterval 20
@@ -61,13 +61,13 @@ void sendMessage(){
 void loop() {
     double ph = ph_calc(), turb = turbidity_calc();
 
-    if((turb > 5 || (ph < 7 || ph > 8)) && (abs(stopTime-start) > 300000 || stopTime-start == 0)){ // 5 minutes interval
+    if((turb > 5 || (ph < 7 || ph > 8)) && (abs(stopTime-start) > 30000 || stopTime-start == 0)){ // 5 minutes interval
       sendMessage();
+      Serial.print("keruh");
       start = millis();
     }
     String data = String("|") + String(ph) + String("|") + String(turb) + String("|");
-    Serial.print(data);
-    Serial.println(turb);
+    Serial.println(data);
     espSerial.println(data); // Sending data to esp via serial communication (rx tx pin)
     delay(500);
     stopTime = millis();

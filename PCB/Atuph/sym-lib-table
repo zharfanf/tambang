@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name Atuph-rescue)(type Legacy)(uri ${KIPRJMOD}/Atuph-rescue.lib)(options "")(descr ""))
+)
