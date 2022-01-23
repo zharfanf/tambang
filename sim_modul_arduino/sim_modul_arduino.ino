@@ -21,7 +21,7 @@ String telpNumber = "\"+6282118988435\""; // No Telp yang ingin dikirimkan notif
 int analogBuffer[SCOUNT];    // store the analog value in the array, read from ADC
 int analogBufferTemp[SCOUNT];
 int analogBufferIndex = 0,copyIndex = 0;
-float averageVoltage = 0,tdsValue = 0,temperature = 25;
+double averageVoltage = 0.0,tdsValue = 0.0,temperature = 25.0;
 
 #include <SoftwareSerial.h>
 
@@ -33,7 +33,7 @@ void setup()
 {
   //Begin serial communication with Arduino and Arduino IDE (Serial Monitor)
   Serial.begin(115200);
-  pinMode(TdsSensorPin,INPUT);
+//  pinMode(TdsSensorPin,INPUT);
   
   //Begin serial communication with Arduino and SIM800L
   simSerial.begin(115200);
@@ -169,9 +169,9 @@ double tds_calc(){
       //Serial.print("voltage:");
       //Serial.print(averageVoltage,2);
       //Serial.print("V   ");
-//      Serial.print("TDS Value:");
-//      Serial.print(tdsValue,0);
-//      Serial.println("ppm ");
+      Serial.print("TDS Value:");
+      Serial.print(tdsValue,0);
+      Serial.println("ppm ");
       return tdsValue;
    }
 }
