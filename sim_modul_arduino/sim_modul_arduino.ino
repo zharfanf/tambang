@@ -15,13 +15,11 @@ String telpNumber = "\"+6282118988435\""; // No Telp yang ingin dikirimkan notif
 //float maxValueOfTurbidity = 4.21; // Nilai Maksimum pada turbidity ketika dimasukkan ke dalam air bersih
 
 // Turbidity Stuffs
-#define TdsSensorPin A1
-#define VREF 5.0      // analog reference voltage(Volt) of the ADC
-#define SCOUNT  30           // sum of sample point
-int analogBuffer[SCOUNT];    // store the analog value in the array, read from ADC
-int analogBufferTemp[SCOUNT];
-int analogBufferIndex = 0,copyIndex = 0;
-double averageVoltage = 0.0,tdsValue = 0.0,temperature = 25.0;
+#include "GravityTDS.h"
+ 
+#define TdsSensorPin A1 // Where Analog pin of TDS sensor is connected to arduino
+GravityTDS gravityTds;
+float tdsValue = 0;
 
 #include <SoftwareSerial.h>
 
@@ -33,7 +31,8 @@ void setup()
 {
   //Begin serial communication with Arduino and Arduino IDE (Serial Monitor)
   Serial.begin(115200);
-//  pinMode(TdsSensorPin,INPUT);
+  Serial.begin(115200);
+  pinMode(TdsSensorPin,INPUT);
   
   //Begin serial communication with Arduino and SIM800L
   simSerial.begin(115200);
@@ -80,7 +79,6 @@ void loop() {
       start = millis();
     }
     String data = String("|") + String(ph) + String("|") + String(tds) + String("|");
-    Serial.println(tds);
     Serial.println(data);
     espSerial.println(data); // Sending data to esp via serial communication (rx tx pin)
     delay(500);
@@ -147,33 +145,9 @@ double avergearray(int* arr, int number){
 
 
 double tds_calc(){
-  static unsigned long analogSampleTimepoint = millis();
-   if(millis()-analogSampleTimepoint > 40U)     //every 40 milliseconds,read the analog value from the ADC
-   {
-     analogSampleTimepoint = millis();
-     analogBuffer[analogBufferIndex] = analogRead(TdsSensorPin);    //read the analog value and store into the buffer
-     analogBufferIndex++;
-     if(analogBufferIndex == SCOUNT) 
-         analogBufferIndex = 0;
-   }   
-   static unsigned long printTimepoint = millis();
-   if(millis()-printTimepoint > 800U)
-   {
-      printTimepoint = millis();
-      for(copyIndex=0;copyIndex<SCOUNT;copyIndex++)
-        analogBufferTemp[copyIndex]= analogBuffer[copyIndex];
-      averageVoltage = getMedianNum(analogBufferTemp,SCOUNT) * (float)VREF / 1024.0; // read the analog value more stable by the median filtering algorithm, and convert to voltage value
-      float compensationCoefficient=1.0+0.02*(temperature-25.0);    //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
-      float compensationVolatge=averageVoltage/compensationCoefficient;  //temperature compensation
-      tdsValue=(133.42*compensationVolatge*compensationVolatge*compensationVolatge - 255.86*compensationVolatge*compensationVolatge + 857.39*compensationVolatge)*0.5; //convert voltage value to tds value
-      //Serial.print("voltage:");
-      //Serial.print(averageVoltage,2);
-      //Serial.print("V   ");
-      Serial.print("TDS Value:");
-      Serial.print(tdsValue,0);
-      Serial.println("ppm ");
-      return tdsValue;
-   }
+  gravityTds.update(); //calculation done here from gravity library
+  tdsValue = gravityTds.getTdsValue(); // then get the TDS value
+  return tdsValue;
 }
 
 
