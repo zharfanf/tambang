@@ -1,5 +1,5 @@
  // PH stuffs
- #define SensorPin A0            //pH meter Analog output to Arduino Analog Input 0
+#define SensorPin A0            //pH meter Analog output to Arduino Analog Input 0
 #define Offset 0.18            //deviation compensate
 #define samplingInterval 20
 #define printInterval 800
