@@ -80,10 +80,9 @@ void loop() {
     if(tds > 1000 || (ph < 6 || ph > 9)){
       if((abs(stopTime-start) > minutes){ // 5-minute interval
       sendMessage(1);
-//      Serial.print("keruh");
-      start = millis();
       }
       else if(stopTime-start == 0) SendMessage(0);
+      start = millis();
     }
     String data = String("|") + String(ph) + String("|") + String(tds) + String("|");
     Serial.println(data);
