@@ -55,7 +55,7 @@ void updateSerial()
   }
 }
 
-void sendMessage(){
+void sendMessage(int State){
   simSerial.println("AT"); //Once the handshake test is successful, it will back to OK
   updateSerial();
 
@@ -64,19 +64,27 @@ void sendMessage(){
   String data = String("AT+CMGS=") + telpNumber;
   simSerial.println(data);//change ZZ with country code and xxxxxxxxxxx with phone number to sms
   updateSerial();
-  simSerial.print("Tangki sudah keruh, silahkan dibersihkan"); //text content
-  updateSerial();
+  if(state){
+      simSerial.print("Tangki sudah keruh, silahkan dibersihkan");
+      updateSerial();
+    }
+  else{
+      simSerial.print("Recalibrating Sensors, Please Wait........");
+      updateSerial();
+    }
   simSerial.write(26);
-
   }
 
 
 void loop() {
     double ph = ph_calc(), tds = tds_calc();
-    if((tds > 1000 || (ph < 6 || ph > 9)) && (abs(stopTime-start) > minutes || stopTime-start == 0)){ // 5-minute interval
-      sendMessage();
+    if(tds > 1000 || (ph < 6 || ph > 9)){
+      if((abs(stopTime-start) > minutes){
+      sendMessage(1);
 //      Serial.print("keruh");
       start = millis();
+      }
+      else if(stopTime-start == 0) SendMessage(0);
     }
     String data = String("|") + String(ph) + String("|") + String(tds) + String("|");
     Serial.println(data);
