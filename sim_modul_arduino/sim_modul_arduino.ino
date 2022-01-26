@@ -12,7 +12,6 @@ static double pHValue,voltage;
 // Editable
 int minutes = 300000; // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
 String telpNumber = "\"+6282118988435\""; // No Telp yang ingin dikirimkan notifikasi
-//float maxValueOfTurbidity = 4.21; // Nilai Maksimum pada turbidity ketika dimasukkan ke dalam air bersih
 
 // Turbidity Stuffs
 #include "GravityTDS.h"
@@ -79,7 +78,7 @@ void sendMessage(int State){
 void loop() {
     double ph = ph_calc(), tds = tds_calc();
     if(tds > 1000 || (ph < 6 || ph > 9)){
-      if((abs(stopTime-start) > minutes){
+      if((abs(stopTime-start) > minutes){ // 5-minute interval
       sendMessage(1);
 //      Serial.print("keruh");
       start = millis();
