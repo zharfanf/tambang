@@ -78,7 +78,7 @@ void sendMessage(int State){
 void loop() {
     double ph = ph_calc(), tds = tds_calc();
     if(tds > 1000 || (ph < 6 || ph > 9)){
-      if((abs(stopTime-start) > minutes){ // 5-minute interval
+      if(abs(stopTime-start) > minutes){ // 5-minute interval
       sendMessage(1);
       }
       else if(stopTime-start == 0) SendMessage(0);
