@@ -10,7 +10,7 @@ static double pHValue,voltage;
 
 
 // Editable
-int minutes = 300000; // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
+int minutes = 3000000; // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
 String telpNumber = "\"+6282118988435\""; // No Telp yang ingin dikirimkan notifikasi
 
 // Turbidity Stuffs
@@ -78,7 +78,9 @@ void sendMessage(int State){
 void loop() {
     double ph = ph_calc(), tds = tds_calc();
     if(tds > 1000.0 || (ph < 6.0 || ph > 9.0)){
-      if(stopTime-start == 0) sendMessage(0);
+      if(stopTime-start == 0) {
+        sendMessage(0);
+        }
       else if(abs(stopTime-start) > minutes){ // 5-minute interval
       sendMessage(1);
       }
@@ -103,7 +105,7 @@ double ph_calc(){
       samplingTime=millis();
   }
   if(millis() - printTime > printInterval) {  //Every 800 milliseconds, print a numerical, convert the state of the LED indicator
-    return pHValue;
+    return pHValue <= 0? 0:pHValue;
     
   }
 }
