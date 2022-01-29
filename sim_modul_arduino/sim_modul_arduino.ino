@@ -63,7 +63,7 @@ void sendMessage(int State){
   String data = String("AT+CMGS=") + telpNumber;
   simSerial.println(data);//change ZZ with country code and xxxxxxxxxxx with phone number to sms
   updateSerial();
-  if(state){
+  if(State){
       simSerial.print("Tangki sudah keruh, silahkan dibersihkan");
       updateSerial();
     }
@@ -78,11 +78,13 @@ void sendMessage(int State){
 void loop() {
     double ph = ph_calc(), tds = tds_calc();
     if(tds > 1000 || (ph < 6 || ph > 9)){
-      if((abs(stopTime-start) > minutes){ // 5-minute interval
+      if((abs(stopTime-start)) > minutes){ // 5-minute interval
       sendMessage(1);
       }
-      else if(stopTime-start == 0) SendMessage(0);
+      else if(stopTime-start == 0) {
+      sendMessage(0);
       start = millis();
+      }
     }
     String data = String("|") + String(ph) + String("|") + String(tds) + String("|");
     Serial.println(data);
