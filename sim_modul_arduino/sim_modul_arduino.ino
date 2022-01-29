@@ -7,11 +7,10 @@
 int pHArray[ArrayLenth];   //Store the average value of the sensor feedback
 int pHArrayIndex=0, start=0, stopTime=0;
 static double pHValue,voltage;
-
+#define minutes 30000 // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
 
 // Editable
-#define minutes 300000 // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
-String telpNumber = "\"+6282118988435\""; // No Telp yang ingin dikirimkan notifikasi
+String telpNumber = "\"+628xxxxxxxx\""; // No Telp yang ingin dikirimkan notifikasi
 
 // Turbidity Stuffs
 #include "GravityTDS.h"
@@ -83,8 +82,8 @@ void loop() {
         }
       else if(abs(stopTime-start) > minutes){ // 5-minute interval
       sendMessage(1);
-      }
       start = millis();
+      }
     }
     String data = String("|") + String(ph) + String("|") + String(tds) + String("|");
     Serial.println(data);
