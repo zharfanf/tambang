@@ -77,11 +77,11 @@ void sendMessage(int State){
 
 void loop() {
     double ph = ph_calc(), tds = tds_calc();
-    if(tds > 1000 || (ph < 6 || ph > 9)){
-      if(abs(stopTime-start) > minutes){ // 5-minute interval
+    if(tds > 1000.0 || (ph < 6.0 || ph > 9.0)){
+      if(stopTime-start == 0) sendMessage(0);
+      else if(abs(stopTime-start) > minutes){ // 5-minute interval
       sendMessage(1);
       }
-      else if(stopTime-start == 0) sendMessage(0);
       start = millis();
     }
     String data = String("|") + String(ph) + String("|") + String(tds) + String("|");
