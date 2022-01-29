@@ -15,7 +15,7 @@ int Index1, Index2, Index3;
 
 
 //#define LED D0
-const char* ssid = "Ayo Bisa";
+const char* ssid = "Access Point ESP";
 const char* password = "12345678";
 ESP8266WebServer server(80);
 
