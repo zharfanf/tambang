@@ -10,7 +10,7 @@ static double pHValue,voltage;
 
 
 // Editable
-//int Minutes1 = 3000000; // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
+#define minutes 300000 // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
 String telpNumber = "\"+6282118988435\""; // No Telp yang ingin dikirimkan notifikasi
 
 // Turbidity Stuffs
@@ -81,7 +81,7 @@ void loop() {
       if(stopTime-start == 0) {
         sendMessage(0);
         }
-      else if(abs(stopTime-start) > 300000){ // 5-minute interval
+      else if(abs(stopTime-start) > minutes){ // 5-minute interval
       sendMessage(1);
       }
       start = millis();
