@@ -1,4 +1,4 @@
- // PH stuffs
+ // PH stuff
 #define SensorPin A0            //pH meter Analog output to Arduino Analog Input 0
 #define Offset 0.18            //deviation compensate
 #define samplingInterval 20
@@ -7,12 +7,13 @@
 int pHArray[ArrayLenth];   //Store the average value of the sensor feedback
 int pHArrayIndex=0, start=0, stopTime=0;
 static double pHValue,voltage;
-#define minutes 30000 // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 5 menit
+
+#define minutes 30000 // Interval waktu untuk notifikasi selanjutnya jika penampung belum dibersihkan. Default 30 detik
 
 // Editable
 String telpNumber = "\"+628xxxxxxxx\""; // No Telp yang ingin dikirimkan notifikasi
 
-// Turbidity Stuffs
+// Turbidity Stuff
 #include "GravityTDS.h"
  
 #define TdsSensorPin A1 // Where Analog pin of TDS sensor is connected to arduino
@@ -80,7 +81,7 @@ void loop() {
       if(stopTime-start == 0) {
         sendMessage(0);
         }
-      else if(abs(stopTime-start) > minutes){ // 5-minute interval
+      else if(abs(stopTime-start) > minutes){ // 30-second interval
       sendMessage(1);
       start = millis();
       }
